@@ -5,7 +5,7 @@
 #include <sys/wait.h>
 
 
-#define MAX_ARGS 64;
+#define MAX_ARGS 64
 #define DELIM " \t\r\n\a"
 
 /**
@@ -112,14 +112,46 @@ int parse_line(char *line, Command *cmd) {
     return 1;
 }
 
-
+/**
+ * @brief Executes the specified shell command.
+ *
+ * This function takes a command structure, parses it, and executes the command
+ * in the current shell environment. The Command structure is expected to contain
+ * all necessary information for the execution, such as the command name, arguments,
+ * and any relevant options.
+ *
+ * @param cmd A pointer to a Command structure containing the details of the command to execute.
+ * @return int Returns 0 on successful execution, or a non-zero error code on failure.
+ *
+ * @example
+ *      Command myCommand;
+ *      myCommand.name = "ls";
+ *      char *args[] = {"-l", "/home/user", NULL};
+ *      myCommand.args = args;
+ *      myCommand.numArgs = 2;
+ *      int status = execute(&myCommand);
+ */
 int execute(Command *cmd) {
 
     pid_t pid;
 
-    if(strcmp(cmd->name, "exit") == 0) {
+    if(strcmp(cmd->name, "exit") == 0) { return 0; }
 
+    pid = fork();
+
+    if(pid == -1) {
+        fprintf(stderr, "Fork Failed!\n");
+        exit(1);
     }
+
+    if(pid == 0) { execvp(cmd->name, cmd->args); }
+
+    int status;
+    do {
+        (void) waitpid(pid, &status, WUNTRACED);
+    } while(!WIFEXITED(status) && !WIFSIGNALED(status));
+
+    return 1;
 
 }
 
