@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-
 #define MAX_ARGS 64
 #define DELIM " \t\r\n\a"
 
@@ -24,7 +23,6 @@ char *read_line(void);
 int parse_line(char *line, Command *cmd);
 void free_command(Command *cmd);
 int execute(Command *cmd);
-
 
 /**
  * Reads a line of input from standard input (stdin).
@@ -54,7 +52,6 @@ char * read_line(void) {
     }
     return line;
 }
-
 
 /**
  * Parses a line of input into a Command structure.
@@ -156,10 +153,7 @@ int execute(Command *cmd) {
 }
 
 
-
 void free_memory(Command *cmd) { free(cmd->args); }
-
-
 
 
 int main(int argc, char **argv)
@@ -171,8 +165,12 @@ int main(int argc, char **argv)
     while (status) {
         printf("x > ");
         line = read_line();
-
+        if(parse_line(line, &cmd)) {
+            status = execute(&cmd);
+            free_command(&cmd);
+        }
     }
 
+    free_memory(line);
     return 0;
 }
