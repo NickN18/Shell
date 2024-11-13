@@ -25,7 +25,7 @@ void free_command(Command *cmd);
 int execute(Command *cmd);
 
 
-int main(int argc, char **argv)
+int main(void)
 {
     int status = 1;
     Command cmd;
@@ -43,7 +43,6 @@ int main(int argc, char **argv)
     free(line);
     return 0;
 }
-
 
 
 /**
