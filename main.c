@@ -24,6 +24,28 @@ int parse_line(char *line, Command *cmd);
 void free_command(Command *cmd);
 int execute(Command *cmd);
 
+
+int main(int argc, char **argv)
+{
+    int status = 1;
+    Command cmd;
+
+    char *line = NULL;
+    while (status) {
+        printf("x > ");
+        line = read_line();
+        if(parse_line(line, &cmd)) {
+            status = execute(&cmd);
+            free_command(&cmd);
+        }
+    }
+
+    free(line);
+    return 0;
+}
+
+
+
 /**
  * Reads a line of input from standard input (stdin).
  *
@@ -153,24 +175,6 @@ int execute(Command *cmd) {
 }
 
 
-void free_memory(Command *cmd) { free(cmd->args); }
+void free_command(Command *cmd) { free(cmd->args); }
 
 
-int main(int argc, char **argv)
-{
-    int status = 1;
-    Command cmd;
-
-    char *line = NULL;
-    while (status) {
-        printf("x > ");
-        line = read_line();
-        if(parse_line(line, &cmd)) {
-            status = execute(&cmd);
-            free_command(&cmd);
-        }
-    }
-
-    free_memory(line);
-    return 0;
-}
